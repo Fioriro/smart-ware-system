@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStock | 审计日志</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #F8FAFC; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 20px -5px rgba(148, 163, 184, 0.15); }
+        .card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid #F1F5F9; box-shadow: 0 4px 20px -5px rgba(148, 163, 184, 0.15); }
+        .btn-primary { background: #0F172A; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen">
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-2xl flex gap-8 z-50">
+        <a href="dashboard.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path></svg>
+            仪表盘
+        </a>
+        <a href="products.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            库存
+        </a>
+        <a href="inbound.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            入库
+        </a>
+        <a href="outbound.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+            出库
+        </a>
+        <a href="logs.html" class="text-slate-900 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            审计
+        </a>
+        <a href="suppliers.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            供应商
+        </a>
+        <button class="text-slate-400 hover:text-rose-500 font-semibold">登出</button>
+    </nav>
+    <main class="max-w-6xl mx-auto pt-28 px-4 pb-12">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-700">操作溯源</h1>
+                <p class="text-slate-500 mt-1">查看所有库存变动的审计记录</p>
+            </div>
+            <button class="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-xl font-semibold hover:bg-emerald-100 transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                导出Excel
+            </button>
+        </div>
+        <div class="card rounded-2xl p-6 mb-6">
+            <div class="flex items-center gap-4 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <label class="text-sm font-medium text-slate-500">时间范围</label>
+                    <input type="date" class="px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700">
+                    <span class="text-slate-400">至</span>
+                    <input type="date" class="px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700">
+                </div>
+                <select class="px-5 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700 font-medium">
+                    <option value="">全部类型</option>
+                    <option value="IN">入库</option>
+                    <option value="OUT">出库</option>
+                </select>
+                <div class="flex-1 min-w-[200px] relative">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" placeholder="搜索SKU或操作人..." class="w-full pl-12 pr-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700 placeholder-slate-400">
+                </div>
+                <button class="px-6 py-3 btn-primary text-white rounded-xl font-semibold">查询</button>
+            </div>
+        </div>
+        <div class="space-y-4">
+            <div class="card p-5 rounded-2xl flex justify-between items-center hover:shadow-lg transition-all hover:-translate-y-0.5">
+                <div class="flex gap-4 items-center">
+                    <span class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-xs font-bold">入库</span>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-700">管理员 <span class="text-slate-500">Admin</span> 将 <span class="font-bold">[MacBook Pro 16寸]</span> 增加了 <span class="text-emerald-600 font-bold">10</span> 件</p>
+                        <p class="text-xs text-slate-500 mt-1">SKU: MACBOOK-001 | 变化前: 3 → 变化后: 13 | 备注: 补货入库</p>
+                    </div>
+                </div>
+                <span class="text-slate-400 text-sm font-medium">2026-01-21 14:30:25</span>
+            </div>
+            <div class="card p-5 rounded-2xl flex justify-between items-center hover:shadow-lg transition-all hover:-translate-y-0.5">
+                <div class="flex gap-4 items-center">
+                    <span class="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-xs font-bold">出库</span>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-700">管理员 <span class="text-slate-500">Admin</span> 将 <span class="font-bold">[iPhone 15 Pro 256GB]</span> 减少了 <span class="text-rose-600 font-bold">5</span> 件</p>
+                        <p class="text-xs text-slate-500 mt-1">SKU: IPHONE-15-PRO | 变化前: 50 → 变化后: 45 | 备注: 销售出库</p>
+                    </div>
+                </div>
+                <span class="text-slate-400 text-sm font-medium">2026-01-21 13:15:10</span>
+            </div>
+            <div class="card p-5 rounded-2xl flex justify-between items-center hover:shadow-lg transition-all hover:-translate-y-0.5">
+                <div class="flex gap-4 items-center">
+                    <span class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-xs font-bold">入库</span>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-700">管理员 <span class="text-slate-500">Admin</span> 将 <span class="font-bold">[AirPods Pro 2]</span> 增加了 <span class="text-emerald-600 font-bold">20</span> 件</p>
+                        <p class="text-xs text-slate-500 mt-1">SKU: AIRPODS-PRO2 | 变化前: 8 → 变化后: 28 | 备注: 新品入库</p>
+                    </div>
+                </div>
+                <span class="text-slate-400 text-sm font-medium">2026-01-21 11:45:33</span>
+            </div>
+            <div class="card p-5 rounded-2xl flex justify-between items-center hover:shadow-lg transition-all hover:-translate-y-0.5 border-l-4 border-l-rose-500">
+                <div class="flex gap-4 items-center">
+                    <span class="bg-rose-50 text-rose-600 px-4 py-2 rounded-xl text-xs font-bold">系统</span>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-700">系统自动触发了 <span class="font-bold">[MacBook Pro 16寸]</span> 的低库存预警</p>
+                        <p class="text-xs text-slate-500 mt-1">SKU: MACBOOK-001 | 当前库存: 3 | 预警阈值: 10</p>
+                    </div>
+                </div>
+                <span class="text-slate-400 text-sm font-medium">2026-01-21 10:20:15</span>
+            </div>
+        </div>
+        <div class="flex items-center justify-between mt-8">
+            <p class="text-sm text-slate-500">显示 1-20 条，共 156 条</p>
+            <div class="flex gap-2">
+                <button class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 transition font-medium">上一页</button>
+                <button class="px-4 py-2 btn-primary text-white rounded-xl font-medium">1</button>
+                <button class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition font-medium">2</button>
+                <button class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition font-medium">3</button>
+                <button class="px-4 py-2 rounded-xl text-slate-400">...</button>
+                <button class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition font-medium">8</button>
+                <button class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 transition font-medium">下一页</button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

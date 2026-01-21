@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStock | 仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #F8FAFC; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 20px -5px rgba(148, 163, 184, 0.15); }
+        .card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid #F1F5F9; box-shadow: 0 4px 20px -5px rgba(148, 163, 184, 0.15); }
+        .card:hover { box-shadow: 0 8px 30px -5px rgba(148, 163, 184, 0.2); }
+        .btn-primary { background: #0F172A; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen">
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-2xl flex gap-8 z-50">
+        <a href="dashboard.html" class="text-slate-900 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path></svg>
+            仪表盘
+        </a>
+        <a href="products.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            库存
+        </a>
+        <a href="inbound.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            入库
+        </a>
+        <a href="outbound.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+            出库
+        </a>
+        <a href="logs.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            审计
+        </a>
+        <a href="suppliers.html" class="text-slate-500 hover:text-slate-700 font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            供应商
+        </a>
+        <button class="text-slate-400 hover:text-rose-500 font-semibold">登出</button>
+    </nav>
+    <main class="max-w-6xl mx-auto pt-28 px-4 pb-12">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-700">仪表盘</h1>
+            <p class="text-slate-500 mt-1">欢迎回来，管理员</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- 商品总数 -->
+            <div class="card p-8 rounded-2xl transition-all hover:-translate-y-1">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-sm font-medium">商品总数</p>
+                        <h2 class="text-4xl font-bold mt-2 text-slate-700">128</h2>
+                        <p class="text-xs text-slate-400 mt-2">较昨日 +3</p>
+                    </div>
+                    <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    </div>
+                </div>
+            </div>
+            <!-- 库存总量 -->
+            <div class="card p-8 rounded-2xl transition-all hover:-translate-y-1">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-sm font-medium">库存总量</p>
+                        <h2 class="text-4xl font-bold mt-2 text-slate-700">5,842</h2>
+                        <p class="text-xs text-emerald-600 mt-2">↑ 12.5%</p>
+                    </div>
+                    <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                </div>
+            </div>
+            <!-- 低库存预警 -->
+            <div class="card p-8 rounded-2xl transition-all hover:-translate-y-1 cursor-pointer border-l-4 border-l-rose-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-rose-400 text-sm font-medium">低库存预警</p>
+                        <h2 class="text-4xl font-bold mt-2 text-slate-700">12</h2>
+                        <p class="text-xs text-slate-500 mt-2">点击查看 →</p>
+                    </div>
+                    <div class="w-14 h-14 bg-rose-50 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                </div>
+            </div>
+            <!-- 今日入库 -->
+            <div class="card p-8 rounded-2xl transition-all hover:-translate-y-1">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-sm font-medium">今日入库</p>
+                        <h2 class="text-4xl font-bold mt-2 text-emerald-600">+156</h2>
+                        <p class="text-xs text-slate-400 mt-2">8 次操作</p>
+                    </div>
+                    <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- 今日出库 -->
+            <div class="card p-8 rounded-2xl transition-all hover:-translate-y-1">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-sm font-medium">今日出库</p>
+                        <h2 class="text-4xl font-bold mt-2 text-rose-400">-89</h2>
+                        <p class="text-xs text-slate-400 mt-2">5 次操作</p>
+                    </div>
+                    <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 预警提示框 - 淡化红色 -->
+        <div class="card p-6 rounded-2xl border-l-4 border-l-rose-300 bg-rose-50/50">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-slate-700">库存预警提醒</p>
+                        <p class="text-slate-500 text-sm">有 <span class="text-rose-500 font-semibold">12</span> 个商品库存低于预警阈值，请及时补货</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-primary text-white px-6 py-3 rounded-xl font-semibold">查看详情</button>
+                    <button class="px-6 py-3 rounded-xl font-semibold text-slate-500 border border-slate-200 hover:bg-slate-50">稍后提醒</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

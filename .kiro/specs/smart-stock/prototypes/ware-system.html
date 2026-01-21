@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStock | Next-Gen Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .low-stock-row { background-color: #fef2f2; border-left: 4px solid #ef4444; }
+        /* 移除了冲突的 CSS 类，完全由 JS 控制显隐 */
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<nav id="main-nav" class="fixed top-6 left-1/2 -translate-x-1/2 glass px-6 py-3 rounded-full flex gap-8 z-50 shadow-xl hidden">
+    <button onclick="showPage('dashboard')" class="hover:text-blue-600 font-semibold transition">仪表盘</button>
+    <button onclick="showPage('products')" class="hover:text-blue-600 font-semibold transition">库存</button>
+    <button onclick="showPage('inbound')" class="hover:text-blue-600 font-semibold transition">入库</button>
+    <button onclick="showPage('logs')" class="hover:text-blue-600 font-semibold transition">审计</button>
+    <button onclick="location.reload()" class="text-red-400">登出</button>
+</nav>
+
+<div id="page-login" class="page-content flex items-center justify-center min-h-screen" style="display: flex;">
+    <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-md text-center">
+        <h1 class="text-4xl font-extrabold mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">SmartStock</h1>
+        <p class="text-slate-500 mb-8">输入指令以进入系统</p>
+        <input id="login-username" type="text" placeholder="用户名" class="w-full mb-4 p-4 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
+        <input id="login-password" type="password" placeholder="密码" class="w-full mb-6 p-4 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
+        <button onclick="login()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold hover:bg-blue-700 transition transform hover:scale-[1.02]">开启协作</button>
+    </div>
+</div>
+
+<div id="page-dashboard" class="page-content max-w-6xl mx-auto pt-24" style="display: none;">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass p-8 rounded-3xl">
+            <p class="text-slate-500 text-sm">当前库存总数</p>
+            <h2 class="text-4xl font-bold mt-2">1,284</h2>
+        </div>
+        <div class="glass p-8 rounded-3xl border-red-100">
+            <p class="text-red-500 text-sm font-semibold">低库存警报</p>
+            <h2 class="text-4xl font-bold mt-2 text-red-600">3</h2>
+        </div>
+        <div class="glass p-8 rounded-3xl">
+            <p class="text-slate-500 text-sm">今日操作流水</p>
+            <h2 class="text-4xl font-bold mt-2">24</h2>
+        </div>
+    </div>
+    <div id="alert-popup" class="bg-red-600 text-white p-6 rounded-2xl flex justify-between items-center animate-bounce shadow-lg">
+        <div>
+            <span class="font-bold">🚨 严重预警：</span> 商品 [MacBook Air M3] 库存已降至阈值(5)以下！
+        </div>
+        <button onclick="showPage('inbound')" class="bg-white text-red-600 px-4 py-2 rounded-xl font-bold">立即补货</button>
+    </div>
+</div>
+
+<div id="page-products" class="page-content max-w-6xl mx-auto pt-24" style="display: none;">
+    <h2 class="text-3xl font-bold mb-6">库存资产清单</h2>
+    <div class="glass rounded-3xl overflow-hidden shadow-sm">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-100">
+            <tr>
+                <th class="p-6">商品名称</th>
+                <th>SKU</th>
+                <th>库存数量</th>
+                <th>安全阈值</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="border-b border-slate-100">
+                <td class="p-6 font-semibold">iPhone 15 Pro</td>
+                <td>IPH-15P-512</td>
+                <td>42</td>
+                <td>10</td>
+                <td><button class="text-blue-600">编辑</button></td>
+            </tr>
+            <tr class="low-stock-row border-b border-slate-100">
+                <td class="p-6 font-semibold">MacBook Air M3</td>
+                <td>MAC-M3-13</td>
+                <td class="text-red-600 font-bold">3</td>
+                <td>5</td>
+                <td><button class="text-blue-600">补货</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="page-inbound" class="page-content max-w-3xl mx-auto pt-24" style="display: none;">
+    <h2 class="text-3xl font-bold mb-6 text-center">入库指令中心</h2>
+    <div class="glass p-8 rounded-3xl">
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">选择商品</label>
+                <select id="inbound-sku" class="w-full p-4 rounded-xl border-none ring-1 ring-slate-200">
+                    <option>MAC-M3-13 (MacBook Air M3)</option>
+                    <option>IPH-15P-512 (iPhone 15 Pro)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">入库数量</label>
+                <input id="inbound-qty" type="number" class="w-full p-4 rounded-xl border-none ring-1 ring-slate-200" value="10">
+            </div>
+            <div class="flex gap-4">
+                <button onclick="confirmInbound()" class="flex-1 bg-black text-white p-4 rounded-2xl font-bold hover:bg-slate-800 transition">单个入库</button>
+                <button class="flex-1 border-2 border-black p-4 rounded-2xl font-bold hover:bg-slate-50 transition">批量导入 (CSV)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="page-logs" class="page-content max-w-4xl mx-auto pt-24" style="display: none;">
+    <h2 class="text-3xl font-bold mb-6">操作溯源</h2>
+    <div class="space-y-4">
+        <div class="glass p-4 rounded-2xl flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold">入库</span>
+                <p class="text-sm font-medium">管理员 <b>Admin</b> 将 [iPhone 15 Pro] 增加了 10 件</p>
+            </div>
+            <span class="text-slate-400 text-xs">2026-01-21 09:12</span>
+        </div>
+        <div class="glass p-4 rounded-2xl flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold">系统</span>
+                <p class="text-sm font-medium">系统自动触发了 [MacBook Air M3] 的低库存预警</p>
+            </div>
+            <span class="text-slate-400 text-xs">2026-01-21 08:00</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showPage(pageId) {
+        // 1. 强制隐藏所有页面 (覆盖 class 中的 display 属性)
+        document.querySelectorAll('.page-content').forEach(p => {
+            p.style.display = 'none';
+        });
+
+        // 2. 显示目标页面
+        const target = document.getElementById('page-' + pageId);
+        if (target) {
+            // 特殊处理：如果是登录页，需要用 flex 居中；其他页面用 block
+            if (pageId === 'login') {
+                target.style.display = 'flex';
+            } else {
+                target.style.display = 'block';
+            }
+        }
+        window.scrollTo(0,0);
+    }
+
+    function login() {
+        // 显示导航栏
+        const nav = document.getElementById('main-nav');
+        if (nav) nav.classList.remove('hidden');
+
+        // 正常跳转
+        showPage('dashboard');
+    }
+
+    function confirmInbound() {
+        const sku = document.getElementById('inbound-sku').value;
+        const qty = document.getElementById('inbound-qty').value;
+        alert(`确认：${sku} 已成功入库 ${qty} 件！\n(MySQL MCP 此时应收到一条插入指令)`);
+        showPage('logs');
+    }
+</script>
+</body>
+</html>
