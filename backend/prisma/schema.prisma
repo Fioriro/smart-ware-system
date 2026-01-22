@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户表 (users)
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique @db.VarChar(50)
+  password  String    @db.VarChar(255)
+  role      String    @default("admin") @db.VarChar(20)
+  status    Int       @default(1) @db.TinyInt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  // 关联：用户操作的库存交易记录
+  inventoryTransactions InventoryTransaction[]
+
+  @@map("users")
+}
+
+// 商品分类表 (categories)
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  parentId  Int?      @map("parent_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  // 自引用关系：父分类
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+
+  // 关联：分类下的商品
+  products Product[]
+
+  @@map("categories")
+}
+
+// 商品表 (products)
+model Product {
+  id           Int       @id @default(autoincrement())
+  sku          String    @unique @db.VarChar(50)
+  name         String    @db.VarChar(200)
+  categoryId   Int       @map("category_id")
+  unit         String    @db.VarChar(20)
+  quantity     Int       @default(0)
+  minThreshold Int       @default(10) @map("min_threshold")
+  costPrice    Decimal?  @map("cost_price") @db.Decimal(10, 2)
+  salePrice    Decimal?  @map("sale_price") @db.Decimal(10, 2)
+  version      Int       @default(1)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  // 关联：商品所属分类
+  category Category @relation(fields: [categoryId], references: [id])
+
+  // 关联：商品的库存交易记录
+  inventoryTransactions InventoryTransaction[]
+
+  @@map("products")
+}
+
+// 供应商表 (suppliers)
+model Supplier {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique @db.VarChar(50)
+  name      String    @db.VarChar(200)
+  contact   String?   @db.VarChar(100)
+  phone     String?   @db.VarChar(20)
+  address   String?   @db.VarChar(500)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  // 关联：供应商的入库记录
+  inventoryTransactions InventoryTransaction[]
+
+  @@map("suppliers")
+}
+
+// 库存交易类型枚举
+enum TransactionType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+// 库存交易表 (inventory_transactions)
+// 注：作为审计日志，不支持软删除
+model InventoryTransaction {
+  id             Int             @id @default(autoincrement())
+  type           TransactionType
+  productId      Int             @map("product_id")
+  sku            String          @db.VarChar(50)
+  quantity       Int
+  quantityBefore Int             @map("quantity_before")
+  quantityAfter  Int             @map("quantity_after")
+  supplierId     Int?            @map("supplier_id")
+  operatorId     Int             @map("operator_id")
+  remark         String?         @db.VarChar(500)
+  createdAt      DateTime        @default(now()) @map("created_at")
+
+  // 关联：交易涉及的商品
+  product Product @relation(fields: [productId], references: [id])
+
+  // 关联：供应商（入库时）
+  supplier Supplier? @relation(fields: [supplierId], references: [id])
+
+  // 关联：操作人
+  operator User @relation(fields: [operatorId], references: [id])
+
+  @@map("inventory_transactions")
+}

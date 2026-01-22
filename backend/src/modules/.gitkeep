@@ -1,0 +1,6 @@
+# MVC 简单模块目录
+# - users/: 用户管理
+# - suppliers/: 供应商管理
+# - categories/: 商品分类
+# - logs/: 审计日志
+# - dashboard/: 仪表盘

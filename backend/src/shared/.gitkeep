@@ -1,0 +1,6 @@
+# 共享代码目录
+# - middleware/: 中间件
+# - mappers/: 数据映射层
+# - container/: 依赖注入容器
+# - utils/: 工具函数
+# - types/: 类型定义

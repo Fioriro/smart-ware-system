@@ -2,14 +2,32 @@
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
       "env": {},
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [
+        "navigate_page",
+        "take_screenshot",
+        "take_snapshot",
+        "fill",
+        "click",
+        "wait_for",
+        "list_console_messages",
+        "list_network_requests",
+        "get_network_request",
+        "fill_form",
+        "evaluate_script"
+      ]
     },
     "mysql": {
       "command": "npx",
-      "args": ["-y", "@f4ww4z/mcp-mysql-server"],
+      "args": [
+        "-y",
+        "@f4ww4z/mcp-mysql-server"
+      ],
       "env": {
         "MYSQL_HOST": "117.72.222.6",
         "MYSQL_USER": "root",
@@ -17,7 +35,17 @@
         "MYSQL_DATABASE": "smart_ware_system"
       },
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [
+        "connect_db",
+        "list_tables",
+        "describe_table",
+        "describe_table",
+        "describe_table",
+        "describe_table",
+        "describe_table",
+        "query",
+        "execute"
+      ]
     }
   }
 }
