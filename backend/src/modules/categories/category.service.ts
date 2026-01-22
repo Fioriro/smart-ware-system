@@ -22,30 +22,40 @@ export class CategoryService {
 
   /**
    * 获取分类树（包含商品数量）
+   * 优化：使用单次查询获取所有分类，并行获取商品数量
    * @returns 分类树结构
    */
   async getCategoryTree(): Promise<CategoryTreeNodeDTO[]> {
-    // 获取所有未删除的分类
-    const categories = await this.prisma.category.findMany({
-      where: {
-        deletedAt: null,
-      },
-      orderBy: [
-        { parentId: 'asc' },
-        { id: 'asc' },
-      ],
-    });
-
-    // 获取每个分类的商品数量
-    const productCounts = await this.prisma.product.groupBy({
-      by: ['categoryId'],
-      where: {
-        deletedAt: null,
-      },
-      _count: {
-        id: true,
-      },
-    });
+    // 并行获取所有未删除的分类和商品数量统计
+    const [categories, productCounts] = await Promise.all([
+      this.prisma.category.findMany({
+        where: {
+          deletedAt: null,
+        },
+        orderBy: [
+          { parentId: 'asc' },
+          { id: 'asc' },
+        ],
+        // 优化：只选择需要的字段
+        select: {
+          id: true,
+          name: true,
+          parentId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
+      }),
+      this.prisma.product.groupBy({
+        by: ['categoryId'],
+        where: {
+          deletedAt: null,
+        },
+        _count: {
+          id: true,
+        },
+      }),
+    ]);
 
     // 创建商品数量映射
     const productCountMap = new Map<number, number>();

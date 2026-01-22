@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { SupplierController } from './supplier.controller';
 import { SupplierService } from './supplier.service';
 import { authMiddleware } from '../../shared/middleware/auth.middleware';
+import { mediumCache, noCache } from '../../shared/middleware/cache.middleware';
 import { getPrismaClient } from '../../shared/container';
 
 /**
@@ -23,11 +24,13 @@ export const createSupplierRoutes = (): Router => {
   router.use(authMiddleware);
 
   // 供应商 CRUD 路由
-  router.get('/', supplierController.findAll);
-  router.get('/:id', supplierController.findById);
-  router.post('/', supplierController.create);
-  router.put('/:id', supplierController.update);
-  router.delete('/:id', supplierController.delete);
+  // GET 请求使用中期缓存（5分钟）
+  router.get('/', mediumCache, supplierController.findAll);
+  router.get('/:id', mediumCache, supplierController.findById);
+  // 写操作禁止缓存
+  router.post('/', noCache, supplierController.create);
+  router.put('/:id', noCache, supplierController.update);
+  router.delete('/:id', noCache, supplierController.delete);
 
   return router;
 };

@@ -24,6 +24,8 @@ model User {
   // 关联：用户操作的库存交易记录
   inventoryTransactions InventoryTransaction[]
 
+  // 索引优化：软删除字段用于过滤已删除记录
+  @@index([deletedAt], name: "idx_users_deleted_at")
   @@map("users")
 }
 
@@ -43,6 +45,10 @@ model Category {
   // 关联：分类下的商品
   products Product[]
 
+  // 索引优化：父分类ID用于分类树查询
+  @@index([parentId], name: "idx_categories_parent_id")
+  // 索引优化：软删除字段用于过滤已删除记录
+  @@index([deletedAt], name: "idx_categories_deleted_at")
   @@map("categories")
 }
 
@@ -68,6 +74,12 @@ model Product {
   // 关联：商品的库存交易记录
   inventoryTransactions InventoryTransaction[]
 
+  // 索引优化：分类ID用于分类筛选查询
+  @@index([categoryId], name: "idx_products_category_id")
+  // 索引优化：软删除字段用于过滤已删除记录
+  @@index([deletedAt], name: "idx_products_deleted_at")
+  // 复合索引：用于低库存查询优化
+  @@index([deletedAt, quantity, minThreshold], name: "idx_products_low_stock")
   @@map("products")
 }
 
@@ -86,6 +98,8 @@ model Supplier {
   // 关联：供应商的入库记录
   inventoryTransactions InventoryTransaction[]
 
+  // 索引优化：软删除字段用于过滤已删除记录
+  @@index([deletedAt], name: "idx_suppliers_deleted_at")
   @@map("suppliers")
 }
 
@@ -120,5 +134,15 @@ model InventoryTransaction {
   // 关联：操作人
   operator User @relation(fields: [operatorId], references: [id])
 
+  // 索引优化：交易类型用于入库/出库记录筛选
+  @@index([type], name: "idx_inventory_transactions_type")
+  // 索引优化：创建时间用于时间范围查询和排序
+  @@index([createdAt], name: "idx_inventory_transactions_created_at")
+  // 索引优化：商品ID用于商品交易记录查询
+  @@index([productId], name: "idx_inventory_transactions_product_id")
+  // 复合索引：用于按类型和时间范围查询（仪表盘今日统计）
+  @@index([type, createdAt], name: "idx_inventory_transactions_type_created_at")
+  // 索引优化：供应商ID用于供应商入库记录查询
+  @@index([supplierId], name: "idx_inventory_transactions_supplier_id")
   @@map("inventory_transactions")
 }

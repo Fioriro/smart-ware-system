@@ -17,8 +17,11 @@ import { createDashboardRoutes } from './modules/dashboard';
 import { createProductRoutes } from './core/product';
 import { createInventoryRoutes } from './core/inventory';
 
-// 加载环境变量
-dotenv.config({ path: '.env.development' });
+// 加载环境变量 - 根据 NODE_ENV 选择配置文件
+const envFile = process.env.NODE_ENV === 'production' 
+  ? '.env.production' 
+  : '.env.development';
+dotenv.config({ path: envFile });
 
 /**
  * 创建 Express 应用实例
@@ -168,5 +171,10 @@ const startServer = async (): Promise<void> => {
 // 导出应用创建函数（用于测试）
 export { createApp };
 
-// 启动服务器
-startServer();
+// 仅在非测试环境中启动服务器
+// Vitest 会设置 VITEST 环境变量
+const isTestEnvironment = process.env.VITEST === 'true' || process.env.NODE_ENV === 'test';
+
+if (!isTestEnvironment) {
+  startServer();
+}

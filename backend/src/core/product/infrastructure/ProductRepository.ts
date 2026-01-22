@@ -60,6 +60,7 @@ export class ProductRepository implements IProductRepository {
 
   /**
    * 分页查询商品列表
+   * 优化：使用 select 只获取需要的字段，减少数据传输
    */
   async findAll(params: ProductQueryParams): Promise<PaginationResult<ProductListItem>> {
     const paginationParams = PaginationUtil.parseParams(params.page, params.pageSize);
@@ -83,28 +84,40 @@ export class ProductRepository implements IProductRepository {
       where.categoryId = params.categoryId;
     }
 
-    // 低库存筛选
+    // 低库存筛选 - 需要特殊处理，因为 Prisma 不支持直接比较两个字段
     if (params.lowStockOnly) {
-      // 使用原始 SQL 查询低库存商品
-      // quantity <= minThreshold
-      where.AND = [
-        {
-          quantity: {
-            lte: this.prisma.product.fields.minThreshold as unknown as number,
-          },
-        },
-      ];
+      // 先获取低库存商品的 ID 列表
+      const lowStockIds = await this.prisma.$queryRaw<Array<{ id: number }>>`
+        SELECT id FROM products 
+        WHERE deleted_at IS NULL 
+        AND quantity <= min_threshold
+      `;
+      
+      if (lowStockIds.length === 0) {
+        // 没有低库存商品，返回空结果
+        return PaginationUtil.createResult([], 0, paginationParams);
+      }
+      
+      where.id = {
+        in: lowStockIds.map(item => item.id),
+      };
     }
 
-    // 查询商品列表和总数
+    // 并行查询商品列表和总数（优化：使用 Promise.all 并行执行）
     const [prismaProducts, total] = await Promise.all([
       this.prisma.product.findMany({
         where,
         skip,
         take,
         orderBy: { createdAt: 'desc' },
+        // 优化：使用 include 一次性获取关联数据，避免 N+1 查询
         include: {
-          category: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       }),
       this.prisma.product.count({ where }),

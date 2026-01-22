@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { CategoryTree } from '@/components/features/CategoryTree';
 import { CategoryForm, CategoryFormData } from '@/components/features/CategoryForm';
+import { SkeletonCategoryTree } from '@/components/ui/Skeleton';
 import { useCategories } from '@/hooks/useProducts';
 import { categoryService, CategoryTreeNode } from '@/services/category.service';
 
@@ -179,13 +180,17 @@ export default function CategoriesPage() {
 
       {/* 分类树卡片 */}
       <Card padding="none">
-        <CategoryTree
-          categories={categories}
-          onAddChild={handleAddCategory}
-          onEdit={handleEditCategory}
-          onDelete={handleDeleteClick}
-          loading={isLoading}
-        />
+        {isLoading ? (
+          <SkeletonCategoryTree rows={6} />
+        ) : (
+          <CategoryTree
+            categories={categories}
+            onAddChild={handleAddCategory}
+            onEdit={handleEditCategory}
+            onDelete={handleDeleteClick}
+            loading={false}
+          />
+        )}
       </Card>
 
       {/* 新建/编辑分类弹窗 */}

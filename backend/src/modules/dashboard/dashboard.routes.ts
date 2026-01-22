@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import { authMiddleware } from '../../shared/middleware/auth.middleware';
+import { shortCache, dashboardStatsCache } from '../../shared/middleware/cache.middleware';
 import { getPrismaClient } from '../../shared/container';
 
 /**
@@ -22,8 +23,8 @@ export const createDashboardRoutes = (): Router => {
   // 所有仪表盘路由都需要认证
   router.use(authMiddleware);
 
-  // 仪表盘路由
-  router.get('/stats', dashboardController.getStats);
+  // 仪表盘路由 - 使用服务端缓存（30秒）+ HTTP 缓存（1分钟）
+  router.get('/stats', shortCache, dashboardStatsCache, dashboardController.getStats);
 
   return router;
 };

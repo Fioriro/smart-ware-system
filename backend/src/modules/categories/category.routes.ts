@@ -7,6 +7,12 @@ import { Router } from 'express';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
 import { authMiddleware } from '../../shared/middleware/auth.middleware';
+import {
+  mediumCache,
+  noCache,
+  categoryTreeCache,
+  invalidateCategoryCache,
+} from '../../shared/middleware/cache.middleware';
 import { getPrismaClient } from '../../shared/container';
 
 /**
@@ -23,11 +29,13 @@ export const createCategoryRoutes = (): Router => {
   router.use(authMiddleware);
 
   // 分类 CRUD 路由
-  router.get('/', categoryController.getCategoryTree);
-  router.get('/:id', categoryController.findById);
-  router.post('/', categoryController.create);
-  router.put('/:id', categoryController.update);
-  router.delete('/:id', categoryController.delete);
+  // GET 请求使用服务端缓存 + HTTP 缓存（5分钟），分类数据相对稳定
+  router.get('/', mediumCache, categoryTreeCache, categoryController.getCategoryTree);
+  router.get('/:id', mediumCache, categoryController.findById);
+  // 写操作禁止缓存，并在成功后失效相关缓存
+  router.post('/', noCache, invalidateCategoryCache, categoryController.create);
+  router.put('/:id', noCache, invalidateCategoryCache, categoryController.update);
+  router.delete('/:id', noCache, invalidateCategoryCache, categoryController.delete);
 
   return router;
 };

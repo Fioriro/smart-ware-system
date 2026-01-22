@@ -8,6 +8,8 @@ import { InventoryService } from '../application/InventoryService';
 import { TransactionRepository } from '../infrastructure/TransactionRepository';
 import { ProductRepository } from '../../product/infrastructure/ProductRepository';
 import { getPrismaClient } from '../../../shared/container';
+import { authMiddleware } from '../../../shared/middleware/auth.middleware';
+import { noCache, invalidateInventoryCache } from '../../../shared/middleware/cache.middleware';
 
 /**
  * 创建库存管理路由
@@ -15,6 +17,9 @@ import { getPrismaClient } from '../../../shared/container';
  */
 export const createInventoryRoutes = (): Router => {
   const router = Router();
+
+  // 所有库存管理路由都需要认证
+  router.use(authMiddleware);
 
   // 获取 Prisma 客户端
   const prisma = getPrismaClient();
@@ -40,14 +45,16 @@ export const createInventoryRoutes = (): Router => {
   /**
    * POST /api/v1/inventory/inbound
    * 单个商品入库
+   * 入库操作会失效商品和仪表盘缓存
    */
-  router.post('/inbound', inventoryController.inbound);
+  router.post('/inbound', noCache, invalidateInventoryCache, inventoryController.inbound);
 
   /**
    * POST /api/v1/inventory/inbound/batch
    * 批量入库
+   * 批量入库操作会失效商品和仪表盘缓存
    */
-  router.post('/inbound/batch', inventoryController.batchInbound);
+  router.post('/inbound/batch', noCache, invalidateInventoryCache, inventoryController.batchInbound);
 
   /**
    * GET /api/v1/inventory/inbound/records
@@ -69,8 +76,9 @@ export const createInventoryRoutes = (): Router => {
   /**
    * POST /api/v1/inventory/outbound
    * 商品出库
+   * 出库操作会失效商品和仪表盘缓存
    */
-  router.post('/outbound', inventoryController.outbound);
+  router.post('/outbound', noCache, invalidateInventoryCache, inventoryController.outbound);
 
   /**
    * GET /api/v1/inventory/outbound/records

@@ -20,6 +20,12 @@ export { useSuppliers, useSupplier, useAllSuppliers } from './useSuppliers';
 // 导出 useInventory hook
 export { useInboundRecords, useOutboundRecords } from './useInventory';
 
+// 导出 useLogs hook
+export { useLogs } from './useLogs';
+
+// 导出 useUsers hook
+export { useUsers, useUser } from './useUsers';
+
 // 通用 fetcher
 const fetcher = async <T>(url: string): Promise<T> => {
   const response = await apiService.get<T>(url);
