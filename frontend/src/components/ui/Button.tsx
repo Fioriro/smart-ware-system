@@ -3,7 +3,7 @@
 import React, { ButtonHTMLAttributes, forwardRef } from 'react';
 
 // Button 变体类型
-type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
 
 // Button 尺寸类型
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -21,11 +21,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 // 变体样式映射
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
-    bg-blue-500 text-white 
-    hover:bg-blue-600 
-    focus:ring-blue-500/50
-    shadow-md hover:shadow-lg
-    disabled:bg-blue-300
+    bg-slate-900 text-white 
+    hover:bg-slate-800 hover:scale-[1.02]
+    focus:ring-slate-900/50
+    shadow-[0_10px_15px_-3px_rgba(15,23,42,0.2)]
+    disabled:bg-slate-400
   `,
   secondary: `
     bg-white text-slate-700 
@@ -47,12 +47,19 @@ const variantStyles: Record<ButtonVariant, string> = {
     focus:ring-slate-500/50
     disabled:text-slate-300
   `,
+  outline: `
+    bg-transparent text-slate-500
+    border-2 border-slate-200
+    hover:bg-slate-50
+    focus:ring-slate-500/50
+    disabled:text-slate-300 disabled:border-slate-100
+  `,
 };
 
 // 尺寸样式映射
 const sizeStyles: Record<ButtonSize, string> = {
   sm: 'px-3 py-1.5 text-sm gap-1.5',
-  md: 'px-4 py-2 text-sm gap-2',
+  md: 'px-5 py-2.5 text-sm gap-2',
   lg: 'px-6 py-3 text-base gap-2.5',
 };
 
@@ -109,7 +116,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     
     const baseStyles = `
       inline-flex items-center justify-center
-      font-medium rounded-lg
+      font-semibold rounded-xl
       transition-all duration-200 ease-in-out
       focus:outline-none focus:ring-2 focus:ring-offset-2
       disabled:cursor-not-allowed disabled:opacity-70

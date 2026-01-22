@@ -100,7 +100,7 @@ export default function OutboundPage() {
   };
   
   return (
-    <Layout title="出库指令中心" subtitle="录入商品出库信息">
+    <Layout title="出库指令中心" subtitle="录入商品出库信息" maxWidth="4xl" centered>
       {/* 成功提示 */}
       {submitSuccess && (
         <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600">

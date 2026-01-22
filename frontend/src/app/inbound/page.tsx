@@ -133,7 +133,7 @@ export default function InboundPage() {
   };
   
   return (
-    <Layout title="入库指令中心" subtitle="录入商品入库信息">
+    <Layout title="入库指令中心" subtitle="录入商品入库信息" maxWidth="4xl" centered>
       {submitSuccess && (
         <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600">
           <p className="font-medium">✓ 入库成功！</p>

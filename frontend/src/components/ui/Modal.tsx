@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
@@ -45,6 +45,7 @@ const sizeStyles = {
   lg: 'max-w-lg',
   xl: 'max-w-xl',
 };
+
 
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -149,6 +150,7 @@ export const Modal: React.FC<ModalProps> = ({
   return null;
 };
 
+
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -218,6 +220,3 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 };
 
 export default Modal;
-
-
-

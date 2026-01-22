@@ -1,5 +1,142 @@
 # SmartStock 项目变更日志
 
+## [2026-01-22] 前端页面布局优化（完成）
+
+### 执行概要
+- **任务编号**：UI 优化
+- **执行时间**：布局调整阶段
+- **执行状态**：成功
+
+### 完成内容
+根据原型图完成所有前端页面布局调整：
+
+**导航栏：** 浮动居中玻璃态设计（桌面端），简化导航项
+
+**仪表盘页面：** 统计卡片图标颜色调整为 slate 色系，移除刷新按钮
+
+**商品列表页面：** 搜索框改为原型图样式（rounded-xl, py-3），移除刷新按钮
+
+**入库/出库页面：** 居中布局，表单样式与原型图一致
+
+**审计日志页面：** 筛选区域样式优化，添加查询按钮
+
+**供应商页面：** 改为卡片网格布局，显示联系人、电话、地址信息
+
+### 文件变更
+
+| 操作 | 文件路径 | 说明 |
+|------|----------|------|
+| 修改 | frontend/src/app/globals.css | 玻璃态、卡片、按钮样式 |
+| 修改 | frontend/src/components/layout/Navbar.tsx | 浮动居中导航栏 |
+| 修改 | frontend/src/components/layout/Layout.tsx | maxWidth/centered 属性 |
+| 修改 | frontend/src/components/ui/Button.tsx | 深色主按钮样式 |
+| 修改 | frontend/src/components/features/InboundForm.tsx | 表单样式优化 |
+| 修改 | frontend/src/components/features/OutboundForm.tsx | 表单样式优化 |
+| 修改 | frontend/src/app/dashboard/page.tsx | 统计卡片样式 |
+| 修改 | frontend/src/app/products/page.tsx | 筛选区域样式 |
+| 修改 | frontend/src/app/inbound/page.tsx | 居中布局 |
+| 修改 | frontend/src/app/outbound/page.tsx | 居中布局 |
+| 修改 | frontend/src/app/logs/page.tsx | 筛选区域样式 |
+| 修改 | frontend/src/app/suppliers/page.tsx | 卡片网格布局 |
+
+### 关键代码/配置
+
+**玻璃态导航栏：**
+```tsx
+<nav className="fixed top-6 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-2xl z-50">
+```
+
+**供应商卡片网格：**
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {suppliers.map((supplier) => (
+    <Card className="p-6 transition-all hover:-translate-y-1" hover>
+      ...
+    </Card>
+  ))}
+</div>
+```
+
+### 遗留问题
+无
+
+### 下一步
+可以启动前端查看效果
+
+---
+
+## [2026-01-22] 前端页面布局优化
+
+### 执行概要
+- **任务编号**：UI 优化
+- **执行时间**：布局调整阶段
+- **执行状态**：部分成功
+
+### 完成内容
+根据原型图调整前端页面布局，使其更接近设计稿：
+
+**导航栏优化：**
+- 改为浮动居中的玻璃态导航栏（桌面端）
+- 简化导航项，移除下拉菜单，采用扁平化设计
+- 移动端保持顶部固定导航
+
+**布局组件优化：**
+- 调整主内容区域顶部间距（pt-28）
+- 页面标题改为 text-3xl
+- 支持 maxWidth 和 centered 属性
+
+**样式优化：**
+- 添加玻璃态效果（.glass 类）
+- 按钮改为深色主按钮样式（bg-slate-900）
+- 表单输入框改为圆角更大的样式（rounded-xl, p-4）
+- 添加动画效果（fadeIn）
+
+**表单组件优化：**
+- InboundForm：调整为居中布局，表单样式与原型图一致
+- OutboundForm：调整为居中布局，库存显示与原型图一致
+
+### 文件变更
+
+| 操作 | 文件路径 | 说明 |
+|------|----------|------|
+| 修改 | frontend/src/app/globals.css | 添加玻璃态、卡片、按钮样式 |
+| 修改 | frontend/src/components/layout/Navbar.tsx | 改为浮动居中导航栏 |
+| 修改 | frontend/src/components/layout/Layout.tsx | 支持 maxWidth 和 centered |
+| 修改 | frontend/src/components/ui/Button.tsx | 深色主按钮样式 |
+| 修改 | frontend/src/components/features/InboundForm.tsx | 表单样式优化 |
+| 修改 | frontend/src/components/features/OutboundForm.tsx | 表单样式优化 |
+| 修改 | frontend/src/app/inbound/page.tsx | 使用居中布局 |
+| 修改 | frontend/src/app/outbound/page.tsx | 使用居中布局 |
+
+### 关键代码/配置
+
+**玻璃态导航栏样式：**
+```css
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 20px -5px rgba(148, 163, 184, 0.15);
+}
+```
+
+**深色主按钮样式：**
+```css
+.btn-primary-dark {
+  background: #0F172A;
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2);
+}
+```
+
+### 遗留问题
+- 其他页面（products、logs、suppliers、dashboard）尚未完全调整
+- 供应商页面需要改为卡片网格布局
+
+### 下一步
+继续调整其他页面布局，使其与原型图一致
+
+---
+
 ## [2026-01-22] 23.2.2 前端构建脚本
 
 ### 执行概要

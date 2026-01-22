@@ -9,7 +9,20 @@ interface LayoutProps {
   title?: string;
   subtitle?: string;
   actions?: React.ReactNode;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '6xl' | '7xl';
+  centered?: boolean;
 }
+
+const maxWidthClasses = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
+  '4xl': 'max-w-4xl',
+  '6xl': 'max-w-6xl',
+  '7xl': 'max-w-7xl',
+};
 
 // Layout 组件
 export const Layout: React.FC<LayoutProps> = ({
@@ -17,27 +30,29 @@ export const Layout: React.FC<LayoutProps> = ({
   title,
   subtitle,
   actions,
+  maxWidth = '6xl',
+  centered = false,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* 导航栏 */}
       <Navbar />
       
-      {/* 主内容区域 */}
-      <main className="pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* 主内容区域 - 桌面端 pt-28 为浮动导航留空间，移动端 pt-20 */}
+      <main className="pt-20 md:pt-28 pb-12 px-4">
+        <div className={`${maxWidthClasses[maxWidth]} mx-auto`}>
           {/* 页面头部 */}
           {(title || actions) && (
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+            <div className={`mb-8 ${centered ? 'text-center' : 'flex flex-col sm:flex-row sm:items-center sm:justify-between'}`}>
               <div>
                 {title && (
-                  <h1 className="text-2xl font-bold text-slate-800">{title}</h1>
+                  <h1 className="text-3xl font-bold text-slate-700">{title}</h1>
                 )}
                 {subtitle && (
-                  <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+                  <p className="mt-1 text-slate-500">{subtitle}</p>
                 )}
               </div>
-              {actions && (
+              {actions && !centered && (
                 <div className="mt-4 sm:mt-0 flex items-center gap-3">
                   {actions}
                 </div>
@@ -49,11 +64,6 @@ export const Layout: React.FC<LayoutProps> = ({
           {children}
         </div>
       </main>
-      
-      {/* 页脚 */}
-      <footer className="py-6 text-center text-sm text-slate-400">
-        <p>© 2026 SmartStock 智能库存管理系统</p>
-      </footer>
     </div>
   );
 };

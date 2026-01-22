@@ -45,6 +45,8 @@ export const useAuthStore = create<AuthState>()(
         // 清除 localStorage
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
+          // 清除 cookie
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         }
         set({
           token: null,

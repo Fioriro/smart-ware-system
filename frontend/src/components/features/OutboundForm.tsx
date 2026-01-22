@@ -143,22 +143,26 @@ export const OutboundForm: React.FC<OutboundFormProps> = ({
   };
   
   return (
-    <Card className="p-8">
+    <Card className="p-10 max-w-4xl mx-auto">
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         {/* SKU 和商品名称 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* SKU 输入 */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               SKU编码 <span className="text-rose-500">*</span>
             </label>
-            <Input
+            <input
+              type="text"
               placeholder="输入或扫描SKU编码"
               value={skuInput}
               onChange={handleSkuChange}
-              error={errors.sku?.message || productError || undefined}
+              className={`w-full p-4 rounded-xl bg-white border ${errors.sku || productError ? 'border-red-500' : 'border-slate-200'} focus:ring-2 focus:ring-indigo-100 focus:border-slate-300 outline-none text-slate-700 placeholder-slate-400`}
               data-testid="input-sku"
             />
+            {(errors.sku?.message || productError) && (
+              <p className="mt-1.5 text-sm text-red-500">{errors.sku?.message || productError}</p>
+            )}
             {productLoading && (
               <p className="mt-1.5 text-sm text-slate-500">正在查询商品...</p>
             )}
@@ -166,7 +170,7 @@ export const OutboundForm: React.FC<OutboundFormProps> = ({
           
           {/* 商品名称（只读） */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               商品名称
             </label>
             <input
@@ -174,85 +178,72 @@ export const OutboundForm: React.FC<OutboundFormProps> = ({
               value={product?.name || ''}
               readOnly
               placeholder="自动匹配商品名称"
-              className="w-full px-4 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 text-slate-500"
+              className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-500"
               data-testid="input-product-name"
             />
           </div>
         </div>
         
-        {/* 当前库存显示 - 突出显示 */}
-        {product && (
-          <div className={`
-            p-4 rounded-xl border-2 flex items-center gap-4
-            ${isStockInsufficient 
-              ? 'bg-red-50 border-red-200' 
-              : 'bg-emerald-50 border-emerald-200'
-            }
-          `}>
-            <div className={`
-              p-3 rounded-xl
-              ${isStockInsufficient ? 'bg-red-100' : 'bg-emerald-100'}
-            `}>
-              <StockIcon className={`w-6 h-6 ${isStockInsufficient ? 'text-red-600' : 'text-emerald-600'}`} />
+        {/* 当前库存和出库数量 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 当前库存显示 */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
+              当前库存
+            </label>
+            <div className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <span className={`text-2xl font-bold ${product && isStockInsufficient ? 'text-rose-600' : 'text-slate-700'}`}>
+                {product?.quantity || 0}
+              </span>
+              <span className="text-sm text-slate-500">{product?.unit || '件'}</span>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-slate-600">当前库存</p>
-              <p className={`text-2xl font-bold ${isStockInsufficient ? 'text-red-600' : 'text-emerald-600'}`}>
-                {product.quantity} <span className="text-base font-normal text-slate-500">{product.unit}</span>
-              </p>
-            </div>
-            {product.isLowStock && (
-              <div className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
-                低库存预警
-              </div>
+          </div>
+          
+          {/* 出库数量 */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
+              出库数量 <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={product?.quantity || undefined}
+              placeholder="请输入出库数量"
+              className={`w-full p-4 rounded-xl bg-white border ${errors.quantity || isStockInsufficient ? 'border-red-500' : 'border-slate-200'} focus:ring-2 focus:ring-indigo-100 outline-none text-slate-700`}
+              {...register('quantity', { valueAsNumber: true })}
+              data-testid="input-quantity"
+            />
+            {errors.quantity && (
+              <p className="mt-1.5 text-sm text-red-500">{errors.quantity.message}</p>
             )}
           </div>
-        )}
+        </div>
         
         {/* 库存不足告警 */}
         {isStockInsufficient && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3" data-testid="stock-warning">
-            <WarningIcon className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold text-red-700">库存不足</p>
-              <p className="text-sm text-red-600 mt-1">
-                当前库存 {product?.quantity} {product?.unit}，无法出库 {quantity} {product?.unit}。
-                请减少出库数量或先进行入库操作。
-              </p>
+          <div className="p-6 rounded-2xl border-l-4 border-l-rose-500 bg-rose-50/50" data-testid="stock-warning">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
+                <WarningIcon className="w-6 h-6 text-rose-500" />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-700">库存不足</p>
+                <p className="text-slate-500 text-sm">
+                  当前库存仅剩 <span className="text-rose-600 font-bold">{product?.quantity}</span> {product?.unit}，无法出库 {quantity} {product?.unit}
+                </p>
+              </div>
             </div>
           </div>
         )}
         
-        {/* 出库数量 */}
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-            出库数量 <span className="text-rose-500">*</span>
-          </label>
-          <Input
-            type="number"
-            min={1}
-            max={product?.quantity || undefined}
-            placeholder="请输入出库数量"
-            {...register('quantity', { valueAsNumber: true })}
-            error={errors.quantity?.message}
-            className={isStockInsufficient ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''}
-            data-testid="input-quantity"
-          />
-          {product && !isStockInsufficient && (
-            <p className="mt-1.5 text-sm text-slate-500">
-              最大可出库: {product.quantity} {product.unit}
-            </p>
-          )}
-        </div>
-        
         {/* 备注 */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-3">
             备注
           </label>
           <textarea
-            className="w-full px-4 py-3 text-sm rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
-            placeholder="输入备注信息（可选）"
+            className="w-full p-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-slate-700 placeholder-slate-400 resize-none"
+            placeholder="输入出库原因或备注信息（可选）"
             rows={3}
             {...register('remark')}
             data-testid="input-remark"
@@ -261,21 +252,20 @@ export const OutboundForm: React.FC<OutboundFormProps> = ({
         
         {/* 操作按钮 */}
         <div className="flex gap-4 pt-4">
-          <Button
+          <button
             type="button"
-            variant="secondary"
             onClick={handleReset}
             disabled={isSubmitting}
-            fullWidth
+            className="flex-1 p-4 rounded-xl border-2 border-slate-200 text-slate-500 font-semibold hover:bg-slate-50 transition disabled:opacity-50"
           >
             重置
-          </Button>
+          </button>
           <Button
             type="submit"
             variant="primary"
             loading={isSubmitting}
             disabled={!product || isSubmitting || isStockInsufficient}
-            fullWidth
+            className="flex-1 p-4"
             data-testid="submit-button"
           >
             确认出库

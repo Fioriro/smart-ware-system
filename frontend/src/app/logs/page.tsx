@@ -72,6 +72,7 @@ const LogItem: React.FC<LogItemProps> = ({ log }) => {
   return (
     <Card
       className="p-5 flex justify-between items-center hover:shadow-lg transition-all hover:-translate-y-0.5"
+      hover
       data-testid={`log-item-${log.id}`}
     >
       <div className="flex gap-4 items-center">
@@ -182,27 +183,25 @@ export default function LogsPage() {
         </div>
       )}
 
-
       {/* 筛选区域 */}
       <Card className="mb-6">
         <div className="flex items-center gap-4 flex-wrap">
           {/* 时间范围筛选 */}
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-medium text-slate-500">时间范围</span>
-            <Input
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-slate-500">时间范围</label>
+            <input
               type="date"
               value={startDate}
               onChange={handleStartDateChange}
-              className="w-36"
+              className="px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700"
               data-testid="filter-start-date"
             />
             <span className="text-slate-400">至</span>
-            <Input
+            <input
               type="date"
               value={endDate}
               onChange={handleEndDateChange}
-              className="w-36"
+              className="px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700"
               data-testid="filter-end-date"
             />
           </div>
@@ -211,7 +210,7 @@ export default function LogsPage() {
           <select
             value={operationType}
             onChange={handleOperationTypeChange}
-            className="px-4 py-2 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-sm text-slate-700 font-medium"
+            className="px-5 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700 font-medium"
             data-testid="filter-operation-type"
           >
             <option value="">全部类型</option>
@@ -220,50 +219,38 @@ export default function LogsPage() {
           </select>
 
           {/* 搜索框 */}
-          <div className="flex-1 min-w-[200px]">
-            <Input
+          <div className="flex-1 min-w-[200px] relative">
+            <SearchIcon className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
+            <input
               type="text"
               placeholder="搜索SKU或操作人..."
               value={keyword}
               onChange={handleKeywordChange}
-              leftIcon={<SearchIcon className="w-5 h-5" />}
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-sm text-slate-700 placeholder-slate-400"
               data-testid="filter-keyword"
             />
           </div>
 
-          {/* 操作按钮 */}
-          <div className="flex items-center gap-2">
-            {hasFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClearFilters}
-                data-testid="clear-filters"
-              >
-                清除筛选
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={refresh}
-              leftIcon={<RefreshIcon className="w-4 h-4" />}
-              data-testid="refresh-logs"
-            >
-              刷新
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={exportToExcel}
-              loading={isExporting}
-              leftIcon={<DownloadIcon className="w-4 h-4" />}
-              className="bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100"
-              data-testid="export-excel"
-            >
-              导出Excel
-            </Button>
-          </div>
+          {/* 查询按钮 */}
+          <Button
+            variant="primary"
+            onClick={refresh}
+            data-testid="query-button"
+          >
+            查询
+          </Button>
+          
+          {/* 导出按钮 */}
+          <Button
+            variant="secondary"
+            onClick={exportToExcel}
+            loading={isExporting}
+            leftIcon={<DownloadIcon className="w-5 h-5" />}
+            className="bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100"
+            data-testid="export-excel"
+          >
+            导出Excel
+          </Button>
         </div>
       </Card>
 

@@ -89,6 +89,7 @@ const DashboardStatCard: React.FC<DashboardStatCardProps> = ({
   <Card
     className={`p-8 transition-all hover:-translate-y-1 ${onClick ? 'cursor-pointer' : ''} ${highlight ? 'border-l-4 border-l-rose-300' : ''}`}
     onClick={onClick}
+    hover
     data-testid="stat-card"
   >
     <div className="flex items-center justify-between">
@@ -218,19 +219,6 @@ export default function DashboardPage() {
     sessionStorage.setItem('lowStockAlertDismissed', 'true');
   };
 
-  // 刷新按钮
-  const refreshButton = (
-    <Button
-      variant="secondary"
-      onClick={refresh}
-      loading={isRefreshing}
-      leftIcon={<RefreshIcon className="w-4 h-4" />}
-      data-testid="refresh-button"
-    >
-      刷新数据
-    </Button>
-  );
-
   // 格式化数字
   const formatNumber = (num: number): string => {
     return num.toLocaleString('zh-CN');
@@ -240,7 +228,6 @@ export default function DashboardPage() {
     <Layout
       title="仪表盘"
       subtitle={`欢迎回来，${user?.username || '管理员'}`}
-      actions={refreshButton}
     >
       {/* 错误提示 */}
       {error && (
@@ -266,8 +253,8 @@ export default function DashboardPage() {
               title="商品总数"
               value={formatNumber(stats?.totalProducts || 0)}
               icon={<PackageIcon className="w-7 h-7" />}
-              iconBgColor="bg-blue-50"
-              iconColor="text-blue-500"
+              iconBgColor="bg-slate-100"
+              iconColor="text-slate-500"
             />
 
             {/* 库存总量 */}
@@ -275,8 +262,8 @@ export default function DashboardPage() {
               title="库存总量"
               value={formatNumber(stats?.totalQuantity || 0)}
               icon={<ChartIcon className="w-7 h-7" />}
-              iconBgColor="bg-green-50"
-              iconColor="text-green-500"
+              iconBgColor="bg-slate-100"
+              iconColor="text-slate-500"
             />
 
             {/* 低库存预警 */}
@@ -286,7 +273,7 @@ export default function DashboardPage() {
               subtitle="点击查看 →"
               icon={<AlertIcon className="w-7 h-7" />}
               iconBgColor="bg-rose-50"
-              iconColor="text-rose-400"
+              iconColor="text-rose-300"
               titleColor="text-rose-400"
               onClick={handleViewLowStock}
               highlight={true}
@@ -297,8 +284,8 @@ export default function DashboardPage() {
               title="今日入库"
               value={`+${formatNumber(stats?.todayInbound || 0)}`}
               icon={<PlusIcon className="w-7 h-7" />}
-              iconBgColor="bg-purple-50"
-              iconColor="text-purple-500"
+              iconBgColor="bg-slate-100"
+              iconColor="text-slate-500"
               valueColor="text-emerald-600"
             />
           </>
@@ -315,8 +302,8 @@ export default function DashboardPage() {
             title="今日出库"
             value={`-${formatNumber(stats?.todayOutbound || 0)}`}
             icon={<MinusIcon className="w-7 h-7" />}
-            iconBgColor="bg-orange-50"
-            iconColor="text-orange-500"
+            iconBgColor="bg-slate-100"
+            iconColor="text-slate-500"
             valueColor="text-rose-400"
           />
         )}

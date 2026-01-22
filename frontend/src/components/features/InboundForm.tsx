@@ -128,22 +128,26 @@ export const InboundForm: React.FC<InboundFormProps> = ({
   };
   
   return (
-    <Card className="p-8">
+    <Card className="p-10 max-w-4xl mx-auto">
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         {/* SKU 和商品名称 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* SKU 输入 */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               SKU编码 <span className="text-rose-500">*</span>
             </label>
-            <Input
+            <input
+              type="text"
               placeholder="输入或扫描SKU编码"
               value={skuInput}
               onChange={handleSkuChange}
-              error={errors.sku?.message || productError || undefined}
+              className={`w-full p-4 rounded-xl bg-white border ${errors.sku || productError ? 'border-red-500' : 'border-slate-200'} focus:ring-2 focus:ring-indigo-100 focus:border-slate-300 outline-none text-slate-700 placeholder-slate-400`}
               data-testid="input-sku"
             />
+            {(errors.sku?.message || productError) && (
+              <p className="mt-1.5 text-sm text-red-500">{errors.sku?.message || productError}</p>
+            )}
             {productLoading && (
               <p className="mt-1.5 text-sm text-slate-500">正在查询商品...</p>
             )}
@@ -151,7 +155,7 @@ export const InboundForm: React.FC<InboundFormProps> = ({
           
           {/* 商品名称（只读） */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               商品名称
             </label>
             <input
@@ -159,7 +163,7 @@ export const InboundForm: React.FC<InboundFormProps> = ({
               value={product?.name || ''}
               readOnly
               placeholder="自动匹配商品名称"
-              className="w-full px-4 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 text-slate-500"
+              className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-500"
               data-testid="input-product-name"
             />
             {product && (
@@ -174,18 +178,11 @@ export const InboundForm: React.FC<InboundFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 供应商选择 */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               供应商 <span className="text-rose-500">*</span>
             </label>
             <select
-              className={`
-                w-full px-4 py-2 text-sm rounded-lg border
-                bg-white text-slate-900
-                transition-all duration-200
-                focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
-                disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed
-                ${errors.supplierId ? 'border-red-500' : 'border-slate-200 hover:border-slate-300'}
-              `}
+              className={`w-full p-4 rounded-xl bg-white border ${errors.supplierId ? 'border-red-500' : 'border-slate-200'} focus:ring-2 focus:ring-indigo-100 outline-none text-slate-700`}
               value={supplierId || ''}
               onChange={(e) => setValue('supplierId', Number(e.target.value))}
               disabled={suppliersLoading}
@@ -205,27 +202,30 @@ export const InboundForm: React.FC<InboundFormProps> = ({
           
           {/* 入库数量 */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               入库数量 <span className="text-rose-500">*</span>
             </label>
-            <Input
+            <input
               type="number"
               min={1}
               placeholder="请输入入库数量"
+              className={`w-full p-4 rounded-xl bg-white border ${errors.quantity ? 'border-red-500' : 'border-slate-200'} focus:ring-2 focus:ring-indigo-100 outline-none text-slate-700`}
               {...register('quantity', { valueAsNumber: true })}
-              error={errors.quantity?.message}
               data-testid="input-quantity"
             />
+            {errors.quantity && (
+              <p className="mt-1.5 text-sm text-red-500">{errors.quantity.message}</p>
+            )}
           </div>
         </div>
         
         {/* 备注 */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-3">
             备注
           </label>
           <textarea
-            className="w-full px-4 py-3 text-sm rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+            className="w-full p-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-slate-700 placeholder-slate-400 resize-none"
             placeholder="输入备注信息（可选）"
             rows={3}
             {...register('remark')}
@@ -235,21 +235,20 @@ export const InboundForm: React.FC<InboundFormProps> = ({
         
         {/* 操作按钮 */}
         <div className="flex gap-4 pt-4">
-          <Button
+          <button
             type="button"
-            variant="secondary"
             onClick={handleReset}
             disabled={isSubmitting}
-            fullWidth
+            className="flex-1 p-4 rounded-xl border-2 border-slate-200 text-slate-500 font-semibold hover:bg-slate-50 transition disabled:opacity-50"
           >
             重置
-          </Button>
+          </button>
           <Button
             type="submit"
             variant="primary"
             loading={isSubmitting}
             disabled={!product || isSubmitting}
-            fullWidth
+            className="flex-1 p-4"
             data-testid="submit-button"
           >
             确认入库

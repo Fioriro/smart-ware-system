@@ -161,6 +161,7 @@ export default function ProductsPage() {
       title="库存资产清单"
       subtitle="管理所有商品信息"
       actions={addButton}
+      maxWidth="7xl"
     >
       {/* 错误提示 */}
       {error && (
@@ -174,19 +175,21 @@ export default function ProductsPage() {
       <Card className="p-6 mb-6">
         <div className="flex items-center gap-4 flex-wrap">
           {/* 搜索框 */}
-          <div className="flex-1 min-w-[300px]">
-            <Input
+          <div className="flex-1 min-w-[300px] relative">
+            <SearchIcon className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
+            <input
+              type="text"
               placeholder="搜索SKU或商品名称..."
               value={keyword}
               onChange={handleSearch}
-              leftIcon={<SearchIcon className="w-5 h-5" />}
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-slate-300 outline-none text-slate-700 placeholder-slate-400"
               data-testid="search-input"
             />
           </div>
           
           {/* 分类筛选 */}
           <select
-            className="px-5 py-2 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none text-slate-700 font-medium"
+            className="px-5 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-100 outline-none text-slate-700 font-medium"
             value={categoryId || ''}
             onChange={handleCategoryChange}
             data-testid="category-filter"
@@ -200,7 +203,7 @@ export default function ProductsPage() {
           </select>
           
           {/* 低库存筛选 */}
-          <label className="flex items-center gap-2 cursor-pointer bg-rose-50 px-4 py-2 rounded-lg border border-rose-100">
+          <label className="flex items-center gap-2 cursor-pointer bg-rose-50 px-4 py-3 rounded-xl border border-rose-100">
             <input
               type="checkbox"
               className="w-5 h-5 text-rose-500 rounded-lg"
@@ -210,16 +213,6 @@ export default function ProductsPage() {
             />
             <span className="text-sm font-medium text-rose-600">仅显示低库存</span>
           </label>
-          
-          {/* 刷新按钮 */}
-          <Button
-            variant="secondary"
-            onClick={refresh}
-            leftIcon={<RefreshIcon className="w-4 h-4" />}
-            data-testid="refresh-button"
-          >
-            刷新
-          </Button>
         </div>
       </Card>
       
